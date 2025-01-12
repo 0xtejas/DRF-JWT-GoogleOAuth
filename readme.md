@@ -5,10 +5,10 @@ This project is a web application built with a Django backend and a Next.js fron
 ## Table of Contents
 
 - [Setup](#setup)
-    - [Google Coud Platform](###google_coud_platform)
-    - [Secrets](##secrets)
-    - [Backed](###backend)
-    - [Frontend](##frontend)
+    - [Google Cloud Platform](#google-cloud-platform) 
+    - [Secrets](#secrets)
+    - [Backed](#backend)
+    - [Frontend](#frontend)
 - [Dependencies](#dependencies)
 - [Running the Project](#running-the-project)
 - [Code Workflow](#code-workflow)
@@ -20,7 +20,7 @@ This project is a web application built with a Django backend and a Next.js fron
 
 Consent screen configuration is simple and can be looked up in the Internet. However, the following configuration must be ensured is set right as per the screenshot.
 
-![Google Coud Platform](.github\images\google_cloud_credentials.png)
+![Google Coud Platform](.github/images/google_cloud_credentials.png)
 
 ### Secrets
 
@@ -58,7 +58,7 @@ Consent screen configuration is simple and can be looked up in the Internet. How
 
 1. **Install Node.js**: Ensure you have Node.js installed. You can download it from [here](https://nodejs.org/).
 
-2. **Install Dependencies**: Navigate to the [frontend](../../tree/main/backend) directory and run:
+2. **Install Dependencies**: Navigate to the [frontend](../../tree/main/frontend) directory and run:
     ```sh
     npm install
     ```
