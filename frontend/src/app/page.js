@@ -7,11 +7,12 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token =localStorage.getItem('jwt_token');
+    const token = localStorage.getItem('jwt_token');
     if (!token) {
       router.push('/login');
     } else {
       setLoading(false);
+      router.push('/home'); // Redirect to /home
     }
   }, [router]);
 
@@ -19,9 +20,5 @@ export default function Page() {
     return null;
   }
 
-  return (
-    <div className="flex flex-col h-screen dark">
-      <Nav />
-    </div>
-  );
+  return null;
 }
