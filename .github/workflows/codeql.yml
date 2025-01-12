@@ -1,0 +1,51 @@
+name: "CodeQL Analysis"
+
+on:
+  push:
+    branches: 
+      - main
+      - "releases/**"  # Customize as needed for your release branches
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: "0 2 * * 0"  # Run a weekly scan every Sunday at 2:00 AM UTC
+
+jobs:
+  analyze:
+    name: "Analyze"
+    permissions:
+      actions: read
+      contents: read
+      security-events: write  # Required for uploading results to GitHub Security tab
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["javascript", "python"]  # Add more languages if necessary
+
+    steps:
+    - name: "Checkout repository"
+      uses: actions/checkout@v3
+
+    - name: "Initialize CodeQL"
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: "Build code"
+      run: |
+        # Add build commands for your project here
+        # Backend: Install Python dependencies using Poetry
+        python -m pip install --upgrade pip
+        pip install poetry
+        poetry install
+
+        # Frontend: Install Node.js dependencies
+        cd frontend
+        npm install
+        cd ..
+
+    - name: "Perform CodeQL Analysis"
+      uses: github/codeql-action/analyze@v2
