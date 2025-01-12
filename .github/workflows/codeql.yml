@@ -44,7 +44,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install poetry
         cd backend
-        poetry install
+        poetry install --no-root
         cd ..
 
     - name: "Set up Node.js"
