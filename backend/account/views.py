@@ -24,10 +24,12 @@ class GoogleLoginView(APIView):
 
     def get(self, request):
         client_secret_json = json.loads(os.getenv('GOOGLE_CLIENT_SECRET_JSON'))
+        client_id = client_secret_json['web']['client_id']
+        redirect_uri = client_secret_json['web']['redirect_uris'][0]
         flow = Flow.from_client_config(
             client_secret_json,
             scopes=['openid', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'],
-            redirect_uri=os.getenv('GOOGLE_REDIRECT_URI')
+            redirect_uri=redirect_uri
         )
         authorization_url, state = flow.authorization_url(prompt='consent')
         request.session['state'] = state
@@ -44,16 +46,18 @@ class GoogleCallbackView(APIView):
             return HttpResponseBadRequest('Invalid state parameter')
 
         client_secret_json = json.loads(os.getenv('GOOGLE_CLIENT_SECRET_JSON'))
+        client_id = client_secret_json['web']['client_id']
+        redirect_uri = client_secret_json['web']['redirect_uris'][0]
         flow = Flow.from_client_config(
             client_secret_json,
             scopes=['openid', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'],
-            redirect_uri=os.getenv('GOOGLE_REDIRECT_URI')
+            redirect_uri=redirect_uri
         )
 
         flow.fetch_token(authorization_response=request.build_absolute_uri())
         credentials = flow.credentials      
         id_info = id_token.verify_oauth2_token(
-            credentials.id_token, google_request.Request(), os.getenv('GOOGLE_CLIENT_ID')
+            credentials.id_token, google_request.Request(), client_id
         )
 
         user, _ = User.objects.get_or_create(
