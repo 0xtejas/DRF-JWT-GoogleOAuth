@@ -27,7 +27,7 @@ load_dotenv(BASE_DIR / '.env', override=True)
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -140,11 +140,11 @@ CORS_ALLOW_CREDENTIALS = True
 
 # Add trusted origins for CSRF protection
 CSRF_TRUSTED_ORIGINS =[
-    'http://localhost:3000',
+    os.getenv('FRONTEND_URL'),
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
+    os.getenv('FRONTEND_URL'),
 ]
 
 CSRF_COOKIE_HTTPONLY = True
@@ -162,7 +162,7 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': os.getenv('SECRET_KEY'),
+    'SIGNING_KEY': os.getenv('JWT_SECRET_KEY'),
     'VERIFYING_KEY': None,
     'AUTH_HEADER_TYPES': ('Bearer',),
     'USER_ID_FIELD': 'id',
