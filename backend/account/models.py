@@ -20,6 +20,11 @@ class CustomeUser(AbstractUser):
         verbose_name='user permissions',
     )
 
+    def save(self, *args, **kwargs):
+        if not self.password:
+            self.set_unusable_password()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.username
 

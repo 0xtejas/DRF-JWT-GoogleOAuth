@@ -125,12 +125,13 @@ class AdminAutoLoginView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        logger.debug(f'Received {request.method} request at {request.path}')
         jwt_authenticator = JWTAuthentication()
         try:
             # Extract and validate the JWT Token
             auth_header = request.headers.get('Authorization')
             if auth_header:
-                token = auth_header.split('')[1]
+                token = auth_header.split(' ')[1]  # Fix the split logic
                 validated_token = jwt_authenticator.get_validated_token(token)
                 user = jwt_authenticator.get_user(validated_token)
 
@@ -143,5 +144,5 @@ class AdminAutoLoginView(APIView):
             return Response({'message': 'Authorization Header missing'}, status=401)
 
         except Exception as e:
-            logger.error(f'Authentication Failed: {str(e)}', exc_info=True)
+            logger.error('Authentication Failed', exc_info=True)
             return Response({'message': 'Authentication Failed', 'error': str(e)}, status=401)

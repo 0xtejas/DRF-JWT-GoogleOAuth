@@ -143,6 +143,10 @@ CSRF_TRUSTED_ORIGINS =[
     'http://localhost:3000',
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+]
+
 CSRF_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = True
 
@@ -169,3 +173,30 @@ SIMPLE_JWT = {
 }
 
 AUTH_USER_MODEL = 'account.CustomeUser'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',  # Change to DEBUG for detailed logs
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'account': {
+            'handlers': ['console'],
+            'level': 'DEBUG',  # Change to DEBUG for detailed logs
+            'propagate': True,
+        },
+    },
+}

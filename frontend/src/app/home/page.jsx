@@ -10,7 +10,6 @@ export default function Page() {
 
   useEffect(() => {
     const token = localStorage.getItem('jwt_token');
-    console.log('JWT Token:', token);
     if (!token) {
       router.push('/login');
     } else {
@@ -22,13 +21,9 @@ export default function Page() {
     const handleGoogleSignIn = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get('token');
-      console.log('Google Sign-In Token:', token);
       if (token) {
-        console.log('Setting token in localStorage');
         localStorage.setItem('jwt_token', token);
         router.push('/home');
-      } else {
-        console.log('Token not found in URL parameters');
       }
     };
     handleGoogleSignIn();
