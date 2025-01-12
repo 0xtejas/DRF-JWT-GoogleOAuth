@@ -11,7 +11,6 @@ This project is a web application built with a Django backend and a Next.js fron
     - [Frontend](#frontend)
 - [Dependencies](#dependencies)
 - [Running the Project](#running-the-project)
-- [Code Workflow](#code-workflow)
 - [API Documentation](#api-documentation)
 
 
