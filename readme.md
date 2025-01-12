@@ -12,6 +12,7 @@ This project is a web application built with a Django backend and a Next.js fron
 - [Dependencies](#dependencies)
 - [Running the Project](#running-the-project)
 - [Code Workflow](#code-workflow)
+- [API Documentation](#api-documentation)
 
 
 ## Setup
@@ -94,3 +95,7 @@ To run the backend server, navigate to the [backend](../../tree/main/backend) di
 ```sh
 poetry run python manage.py runserver
 ```
+
+## API Documentation
+
+For detailed information about the API routes, refer to the [API Documentation](backend/readme.md#api-documentation).
