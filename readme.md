@@ -5,7 +5,10 @@ This project is a web application built with a Django backend and a Next.js fron
 ## Table of Contents
 
 - [Setup](#setup)
+    - [Google Coud Platform](###google_coud_platform)
     - [Secrets](##secrets)
+    - [Backed](###backend)
+    - [Frontend](##frontend)
 - [Dependencies](#dependencies)
 - [Running the Project](#running-the-project)
 - [Code Workflow](#code-workflow)
@@ -13,7 +16,13 @@ This project is a web application built with a Django backend and a Next.js fron
 
 ## Setup
 
-## Secrets
+### Google Coud Platform
+
+Consent screen configuration is simple and can be looked up in the Internet. However, the following configuration must be ensured is set right as per the screenshot.
+
+![Google Coud Platform](.github\images\google_cloud_credentials.png)
+
+### Secrets
 
 | Secret Name               | Description                          | Frontend/Backend | Necessity |
 |---------------------------|--------------------------------------|------------------|-----------|
