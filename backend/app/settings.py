@@ -172,7 +172,7 @@ SIMPLE_JWT = {
     'JTI_CLAIM': 'jti',
 }
 
-AUTH_USER_MODEL = 'account.CustomeUser'
+AUTH_USER_MODEL = 'account.CustomUser'  
 
 LOGGING = {
     'version': 1,

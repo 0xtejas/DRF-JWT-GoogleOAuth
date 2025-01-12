@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomeUser, JWTToken
+from .models import CustomUser, JWTToken
 
-admin.site.register(CustomeUser)
+admin.site.register(CustomUser)
 admin.site.register(JWTToken)

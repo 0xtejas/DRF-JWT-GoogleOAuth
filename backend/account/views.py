@@ -60,10 +60,22 @@ class GoogleCallbackView(APIView):
             credentials.id_token, google_request.Request(), client_id
         )
 
-        user, _ = User.objects.get_or_create(
+        user, created = User.objects.get_or_create(
             google_id=id_info['sub'],
-            defaults={'username': id_info['email'], 'email': id_info['email']}
+            defaults={
+                'username': id_info['email'],
+                'email': id_info['email'],
+                'first_name': id_info.get('given_name', ''),
+                'last_name': id_info.get('family_name', ''),
+                'profile_picture': id_info.get('picture', '')
+            }
         )
+
+        if not created:
+            user.first_name = id_info.get('given_name', '')
+            user.last_name = id_info.get('family_name', '')
+            user.profile_picture = id_info.get('picture', '')
+            user.save()
 
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
@@ -169,3 +181,15 @@ class VerifyTokenView(APIView):
         except Exception as e:
             logger.error('Token verification failed', exc_info=True)
             return Response({'message': 'Token verification failed', 'error': str(e)}, status=400)
+
+class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            'email': user.email,
+            'username': user.username,
+            'profile_picture': user.profile_picture
+    }, status=200)
+

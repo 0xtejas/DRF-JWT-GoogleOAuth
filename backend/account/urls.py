@@ -10,4 +10,5 @@ urlpatterns = [
     path('admin/redirect/', AdminRedirectView.as_view(), name='admin-redirect'),
     path('admin/auto-login/', AdminAutoLoginView.as_view(), name='admin-auto-login'),
     path('verify-token/', VerifyTokenView.as_view(), name='verify-token'),
+    path('profile/', ProfileView.as_view(), name='profile'),
 ]

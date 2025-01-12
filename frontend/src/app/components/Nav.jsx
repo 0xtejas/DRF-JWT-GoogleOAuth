@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -32,6 +32,36 @@ export const AcmeLogo = () => {
 export default function Nav() {
   const [alertMessage, setAlertMessage] = useState(null);
   const [alertColor, setAlertColor] = useState('danger'); // Add state for alert color
+  const [email, setEmail] = useState(''); // Add state for email
+  const [profilePicture, setProfilePicture] = useState(''); // Add state for profile picture
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem('jwt_token');
+      if (!token) return;
+
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_DJANGO_URL}/api/auth/profile/`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setEmail(data.email);
+          setProfilePicture(data.profile_picture); // Set profile picture
+        } else {
+          console.error('Failed to fetch profile');
+        }
+      } catch (error) {
+        console.error('An error occurred while fetching profile:', error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const handleLogout = async () => {
     const token = localStorage.getItem('jwt_token');
@@ -112,13 +142,13 @@ export default function Nav() {
                 color="secondary"
                 name="Jason Hughes"
                 size="sm"
-                src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                src={profilePicture || "https://i.pravatar.cc/150?u=a042581f4e29026704d"} // Use profile picture
               />
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem key="profile" className="h-14 gap-2">
                 <p className="font-semibold">Signed in as</p>
-                <p className="font-semibold">zoey@example.com</p>
+                <p className="font-semibold">{email}</p> {/* Display the fetched email */}
               </DropdownItem>
               <DropdownItem key="settings">My Settings</DropdownItem>
               <DropdownItem key="logout" color="danger">
