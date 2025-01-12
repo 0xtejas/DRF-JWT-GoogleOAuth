@@ -43,7 +43,7 @@ class GoogleCallbackView(APIView):
         state = request.session.get('state')
 
         if not state:
-            return HttpResponseBadRequest('Invalid state parameter')
+            return HttpResponseBadRequest({'message': 'Invalid state parameter', 'alertColor': 'danger'})
 
         client_secret_json = json.loads(os.getenv('GOOGLE_CLIENT_SECRET_JSON'))
         client_id = client_secret_json['web']['client_id']
@@ -68,6 +68,7 @@ class GoogleCallbackView(APIView):
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
         refresh_token = str(refresh)
+        token_expiry = (timezone.now() + timedelta(days=7)).timestamp() * 1000  # Convert to milliseconds
 
         JWTToken.objects.create(
             user=user,
@@ -76,7 +77,7 @@ class GoogleCallbackView(APIView):
             expires_at=timezone.now() + timedelta(days=7)
         )
 
-        return redirect(f'{os.getenv("FRONTEND_URL")}/login?access_token={access_token}&refresh_token={refresh_token}')
+        return redirect(f'{os.getenv("FRONTEND_URL")}/home?access_token={access_token}&refresh_token={refresh_token}&token_expiry={int(token_expiry)}&alertColor=success')
     
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
@@ -84,17 +85,17 @@ class LogoutView(APIView):
     def post(self, request):
         refresh_token = request.data.get('refresh')
         if not refresh_token:
-            return Response({'message': 'Missing Refresh Token'}, status=403)
+            return Response({'message': 'Missing Refresh Token', 'alertColor': 'warning'}, status=403)
         
         try:
             RefreshToken(refresh_token)
         except (InvalidToken, TokenError):
-            return Response({'message': 'Invalid Refresh Token'}, status=403)
+            return Response({'message': 'Invalid Refresh Token', 'alertColor': 'danger'}, status=403)
 
         JWTToken.objects.filter(token=refresh_token).delete()
         request.session.flush()
 
-        return Response({'message': 'Logout Successful'})
+        return Response({'message': 'Logout Successful', 'alertColor': 'success'})
 
 
 class CustomTokenRefreshView(APIView):
@@ -103,19 +104,19 @@ class CustomTokenRefreshView(APIView):
     def post(self, request):
         refresh_token = request.data.get('refresh', None)
         if not refresh_token:
-            return Response({'message': 'Refresh token is required'}, status=400)
+            return Response({'message': 'Refresh token is required', 'alertColor': 'warning'}, status=400)
         
         try:
             token = RefreshToken(refresh_token)
             if not JWTToken.objects.filter(token=refresh_token).exists():
-                return Response({'message': 'Token revoked'}, status=401)
+                return Response({'message': 'Token revoked', 'alertColor': 'danger'}, status=401)
 
-            return Response({'access_token': str(token.access_token)})
+            return Response({'access_token': str(token.access_token), 'alertColor': 'success'})
         except (InvalidToken, TokenError):
-            return Response({'message': 'Invalid or expired token. Please log in again.'}, status=400)
+            return Response({'message': 'Invalid or expired token. Please log in again.', 'alertColor': 'danger'}, status=400)
         except Exception as e:
             logger.error(f'Token refresh failed: {str(e)}', exc_info=True)
-            return Response({'message': 'Token refresh failed', 'error': str(e)}, status=400)            
+            return Response({'message': 'Token refresh failed', 'error': str(e), 'alertColor': 'danger'}, status=400)            
         
 class AdminRedirectView(APIView):
     permission_classes =[IsAuthenticated]
@@ -142,11 +143,29 @@ class AdminAutoLoginView(APIView):
                 # Authenticate the user and establish a session
                 if user.is_staff or user.is_superuser:
                     login(request, user)
-                    return redirect('/admin/')
+                    return Response({'message': 'Login successful', 'alertColor': 'success'}, status=200)
                 
-                return Response({'message': 'Unauthorized'}, status=403)
-            return Response({'message': 'Authorization Header missing'}, status=401)
+                return Response({'message': 'Unauthorized', 'alertColor': 'danger'}, status=403)
+            return Response({'message': 'Authorization Header missing', 'alertColor': 'warning'}, status=401)
 
+        except InvalidToken:
+            return Response({'message': 'Token is invalid or expired', 'alertColor': 'danger'}, status=401)
         except Exception as e:
             logger.error('Authentication Failed', exc_info=True)
-            return Response({'message': 'Authentication Failed', 'error': str(e)}, status=401)
+            return Response({'message': 'Authentication Failed', 'error': str(e), 'alertColor': 'danger'}, status=401)
+
+class VerifyTokenView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        token = request.headers.get('Authorization').split(' ')[1]
+        try:
+            jwt_authenticator = JWTAuthentication()
+            validated_token = jwt_authenticator.get_validated_token(token)
+            jwt_authenticator.get_user(validated_token)
+            return Response({'message': 'Token is valid'}, status=200)
+        except (InvalidToken, TokenError):
+            return Response({'message': 'Invalid or expired token'}, status=401)
+        except Exception as e:
+            logger.error('Token verification failed', exc_info=True)
+            return Response({'message': 'Token verification failed', 'error': str(e)}, status=400)

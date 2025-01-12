@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -9,24 +9,31 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('jwt_token');
-    if (!token) {
-      router.push('/login');
-    } else {
-      setLoading(false);
-    }
-  }, [router]);
+    const urlParams = new URLSearchParams(window.location.search);
+    const accessToken = urlParams.get('access_token');
+    const refreshToken = urlParams.get('refresh_token');
+    const tokenExpiry = parseInt(urlParams.get('token_expiry'), 10); // Parse tokenExpiry as integer
 
-  useEffect(() => {
-    const handleGoogleSignIn = async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('token');
-      if (token) {
-        localStorage.setItem('jwt_token', token);
-        router.push('/home');
+    if (accessToken && refreshToken && tokenExpiry) {
+      localStorage.setItem('jwt_token', accessToken);
+      localStorage.setItem('refresh_token', refreshToken);
+      localStorage.setItem('token_expiry', tokenExpiry);
+      setLoading(false);
+      router.replace('/home');
+    } else {
+      const token = localStorage.getItem('jwt_token');
+      const expiry = parseInt(localStorage.getItem('token_expiry'), 10); // Parse expiry as integer
+      const now = new Date().getTime();
+
+      if (!token || !expiry || now >= expiry) {
+        localStorage.removeItem('jwt_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('token_expiry');
+        router.push('/login');
+      } else {
+        setLoading(false);
       }
-    };
-    handleGoogleSignIn();
+    }
   }, [router]);
 
   if (loading) {

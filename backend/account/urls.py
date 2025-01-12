@@ -1,4 +1,3 @@
-
 from django.contrib import admin
 from django.urls import path, include
 from .views import *
@@ -10,4 +9,5 @@ urlpatterns = [
     path('token/refresh/', CustomTokenRefreshView.as_view(), name='token-refresh'),
     path('admin/redirect/', AdminRedirectView.as_view(), name='admin-redirect'),
     path('admin/auto-login/', AdminAutoLoginView.as_view(), name='admin-auto-login'),
+    path('verify-token/', VerifyTokenView.as_view(), name='verify-token'),
 ]
