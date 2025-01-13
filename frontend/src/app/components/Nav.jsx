@@ -89,7 +89,7 @@ export default function Nav() {
         setAlertMessage(data.message || 'Logout Successful');
         setAlertColor(data.alertColor || 'success'); // Set alert color from backend
         setTimeout(() => {
-          window.location.href = '/login';
+            window.location.reload();
         }, 2000); // Redirect after 2 seconds to show the alert
       } else {
         setAlertMessage(data.message || 'Failed to logout');

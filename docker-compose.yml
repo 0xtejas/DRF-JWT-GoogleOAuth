@@ -1,0 +1,37 @@
+services:
+  backend:
+    image: backend-custom
+    build: ./backend  
+    restart: unless-stopped
+    expose:
+      - 8000
+    volumes:
+      - static:/usr/src/app/static
+      - media:/usr/src/app/media
+    command: poetry run gunicorn app.wsgi:application --bind 0.0.0.0:8000 -w 2 --access-logfile - --error-logfile -
+    env_file:
+      - ./backend/.env
+    ports:
+      - "8000:8000"
+
+  frontend:
+    container_name: frontend
+    build:
+      context: .  
+      dockerfile: frontend/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./frontend/.env.local
+    volumes:
+      - static:/usr/src/app/static
+      - media:/usr/src/app/media
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+volumes:
+  static:
+    external: true
+  media:
+    external: true
