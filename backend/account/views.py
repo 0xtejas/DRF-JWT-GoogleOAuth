@@ -89,7 +89,7 @@ class GoogleCallbackView(APIView):
             expires_at=timezone.now() + timedelta(days=7)
         )
 
-        return redirect(f'{os.getenv("FRONTEND_URL")}/home?access_token={access_token}&refresh_token={refresh_token}&token_expiry={int(token_expiry)}&alertColor=success')
+        return redirect(f'{os.getenv("FRONTEND_URL")}/home/?access_token={access_token}&refresh_token={refresh_token}&token_expiry={int(token_expiry)}&alertColor=success')
     
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
