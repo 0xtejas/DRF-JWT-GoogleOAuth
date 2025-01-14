@@ -1,6 +1,6 @@
 services:
   backend:
-    image: backend-custom
+    image: ghcr.io/0xtejas/drf-jwt-backend:latest
     build: ./backend  
     restart: unless-stopped
     expose:
@@ -15,6 +15,7 @@ services:
       - "8000:8000"
 
   frontend:
+    image: ghcr.io/0xtejas/drf-jwt-frontend:latest
     container_name: frontend
     build:
       context: .  
