@@ -128,8 +128,8 @@ class CustomTokenRefreshView(APIView):
             return Response({'message': 'Invalid or expired token. Please log in again.', 'alertColor': 'danger'}, status=400)
         except Exception as e:
             logger.error(f'Token refresh failed: {str(e)}', exc_info=True)
-            return Response({'message': 'Token refresh failed', 'error': str(e), 'alertColor': 'danger'}, status=400)            
-        
+            return Response({'message': 'Token refresh failed', 'alertColor': 'danger'}, status=400)  # Removed error details
+
 class AdminRedirectView(APIView):
     permission_classes =[IsAuthenticated]
 
@@ -164,7 +164,7 @@ class AdminAutoLoginView(APIView):
             return Response({'message': 'Token is invalid or expired', 'alertColor': 'danger'}, status=401)
         except Exception as e:
             logger.error('Authentication Failed', exc_info=True)
-            return Response({'message': 'Authentication Failed', 'error': str(e), 'alertColor': 'danger'}, status=401)
+            return Response({'message': 'Authentication Failed', 'alertColor': 'danger'}, status=401)  # Removed error details
 
 class VerifyTokenView(APIView):
     permission_classes = [AllowAny]
@@ -180,7 +180,7 @@ class VerifyTokenView(APIView):
             return Response({'message': 'Invalid or expired token'}, status=401)
         except Exception as e:
             logger.error('Token verification failed', exc_info=True)
-            return Response({'message': 'Token verification failed', 'error': str(e)}, status=400)
+            return Response({'message': 'Token verification failed', 'alertColor': 'danger'}, status=400)  # Removed error details
 
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
