@@ -5,11 +5,11 @@ FROM node:20.10.0-alpine AS builder
 WORKDIR /app
 
 # Install dependencies
-COPY frontend/package*.json ./
+COPY package*.json ./
 RUN npm install
 
 # Copy source and build
-COPY frontend/ .
+COPY . .
 RUN npm run build
 
 # Stage 2: Serve the build with Nginx
